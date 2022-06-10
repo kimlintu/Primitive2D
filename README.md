@@ -1,4 +1,4 @@
-A simple 2D game engine written in C/C++ using SDL2 and OpenGL.
+A basic 2D game engine written in C/C++ using SDL2 and OpenGL.
 
 # Goals
 
