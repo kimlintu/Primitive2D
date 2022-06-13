@@ -12,5 +12,5 @@ set LINKER_OPTIONS=/LIBPATH:%SDL_LIBRARY_PATH% /subsystem:windows
 
 IF NOT EXIST ..\build mkdir ..\build
 pushd ..\build
-cl %COMPILER_OPTIONS% ..\src\platform_win.cpp %LIBRARIES% /link %LINKER_OPTIONS%
+cl %COMPILER_OPTIONS% ..\src\platform.cpp %LIBRARIES% /link %LINKER_OPTIONS%
 popd
