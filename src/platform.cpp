@@ -1,7 +1,14 @@
+#include <glad/glad.h>
 #include <SDL.h>
 #include <SDL_opengl.h>
 
 #include <stdio.h>
+
+float tri_vertices[] = {
+    0.0f, -0.5f, 0.0f,
+    0.5f,  0.5f, 0.0f,
+   -0.5f, -0.5f, 0.0f, 
+};
 
 int main(int argc, char *argv[]) {
     if(SDL_Init(SDL_INIT_VIDEO) < 0) {
@@ -39,8 +46,14 @@ int main(int argc, char *argv[]) {
         return -1;
     }
 
+    if(!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress)) {
+        // TODO: Error logging
+
+        return -1;
+    }
+
     glViewport(0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT);
-    glClearColor(0.3, 0.5, 0, 1);
+    glClearColor(0.3f, 0.5f, 0.0f, 1.0f);
 
     bool running = true;
     while(running) {
