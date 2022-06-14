@@ -10,7 +10,10 @@ set COMPILER_OPTIONS=/external:W4 /external:I%SDL_HEADERS_PATH% /W4
 
 set LINKER_OPTIONS=/LIBPATH:%SDL_LIBRARY_PATH% /subsystem:windows 
 
+set FILE_PATH="..\src"
+set FILES=%FILE_PATH%\platform.cpp %FILE_PATH%\glad.c %FILE_PATH%\shader_program.cpp
+
 IF NOT EXIST ..\build mkdir ..\build
 pushd ..\build
-cl %COMPILER_OPTIONS% ..\src\platform.cpp ..\src\glad.c %LIBRARIES% /link %LINKER_OPTIONS%
+cl %COMPILER_OPTIONS% %FILES% %LIBRARIES% /link %LINKER_OPTIONS%
 popd

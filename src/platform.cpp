@@ -2,13 +2,17 @@
 #include <SDL.h>
 #include <SDL_opengl.h>
 
+#include "includes/shader_program.h"
+
 #include <stdio.h>
 
 float tri_vertices[] = {
     0.0f, -0.5f, 0.0f,
     0.5f,  0.5f, 0.0f,
-   -0.5f, -0.5f, 0.0f, 
+   -0.5f,  0.5f, 0.0f, 
 };
+
+
 
 int main(int argc, char *argv[]) {
     if(SDL_Init(SDL_INIT_VIDEO) < 0) {
@@ -54,6 +58,32 @@ int main(int argc, char *argv[]) {
 
     glViewport(0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT);
     glClearColor(0.3f, 0.5f, 0.0f, 1.0f);
+
+    Shader test_vertex_shader = { GL_VERTEX_SHADER, "../src/shaders/test.vert" };
+    Shader test_fragment_shader = { GL_FRAGMENT_SHADER, "../src/shaders/test.frag" };
+    Shader test_shaders[2] = { test_vertex_shader, test_fragment_shader };
+
+    ShaderProgram test_shader_program;
+    if(!create_shader_program(test_shaders, 2, &test_shader_program)) {
+        // TODO: Error logging
+
+        return -1;
+    }
+
+    GLuint vao;
+    glGenVertexArrays(1, &vao);
+    glBindVertexArray(vao);
+
+    GLuint vbo;
+    glGenBuffers(1, &vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(tri_vertices), tri_vertices, GL_STATIC_DRAW);
+
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), 0);
+
+    glBindVertexArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
 
     bool running = true;
     while(running) {
@@ -104,6 +134,11 @@ int main(int argc, char *argv[]) {
             }
         }
         glClear(GL_COLOR_BUFFER_BIT);
+
+        glBindVertexArray(vao);
+        glUseProgram(test_shader_program.id);
+        
+        glDrawArrays(GL_TRIANGLES, 0, 3);
 
         SDL_GL_SwapWindow(window);
     }
