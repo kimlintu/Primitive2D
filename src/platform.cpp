@@ -35,23 +35,22 @@ int main(int argc, char *argv[]) {
     int DISPLAY_WIDTH = 800; 
     int DISPLAY_HEIGHT = 600; 
     SDL_Window *window = SDL_CreateWindow("Title", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-            DISPLAY_WIDTH, DISPLAY_HEIGHT, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
+            DISPLAY_WIDTH, DISPLAY_HEIGHT,  SDL_WINDOW_SHOWN);
     if(!window) {
-        // TODO: Error logging
+        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "ERROR [Could not create a window]: %s", SDL_GetError());
 
         return -1;
     }
 
     SDL_GLContext gl_context = SDL_GL_CreateContext(window);
     if(!gl_context) {
-        // TODO: Error logging
+        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "ERROR [Could not create an OpenGL context]: %s", SDL_GetError());
 
-        printf("ERROR: [could not create OpenGL context]: %s\n", SDL_GetError());
         return -1;
     }
 
     if(!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress)) {
-        // TODO: Error logging
+        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "ERROR [Could not initialize GLAD with SDL function loader]");
 
         return -1;
     }
@@ -65,7 +64,7 @@ int main(int argc, char *argv[]) {
 
     ShaderProgram test_shader_program;
     if(!create_shader_program(test_shaders, 2, &test_shader_program)) {
-        // TODO: Error logging
+        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "ERROR [Could not initialize GLAD with SDL function loader]");
 
         return -1;
     }
