@@ -1,6 +1,7 @@
-#include <glad/glad.h>
-#include <SDL.h>
-#include <SDL_opengl.h>
+#include "includes/glad_i.h"
+#include "includes/sdl_gl.h"
+
+#include "../examples/breakout.cpp"
 
 #include "includes/shader_program.h"
 
@@ -72,22 +73,7 @@ int main(int argc, char *argv[]) {
         return -1;
     }
 
-    GLuint vao;
-    glGenVertexArrays(1, &vao);
-    glBindVertexArray(vao);
-
-    GLuint vbo;
-    glGenBuffers(1, &vbo);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(tri_vertices), tri_vertices, GL_STATIC_DRAW);
-
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), 0);
-
-    glBindVertexArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-    // Call game_init
+    game_init();
 
     uint64_t prev_tick = SDL_GetTicks64();
     uint64_t lag = 0;
@@ -147,20 +133,15 @@ int main(int argc, char *argv[]) {
         lag += elapsed_ticks;
 
         while(lag >= MS_PER_TICK) {
-            // call game_update()
+            game_update();
 
             lag -= MS_PER_TICK;
         }
         float dt = lag / MS_PER_TICK;
 
-        // call game_render()
-
         glClear(GL_COLOR_BUFFER_BIT);
 
-        glBindVertexArray(vao);
-        glUseProgram(test_shader_program.id);
-
-        glDrawArrays(GL_TRIANGLES, 0, 6);
+        game_render();
 
         SDL_GL_SwapWindow(window);
     }
