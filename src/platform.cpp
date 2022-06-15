@@ -7,12 +7,16 @@
 #include <stdio.h>
 
 float tri_vertices[] = {
-    0.0f, -0.5f, 0.0f,
-    0.5f,  0.5f, 0.0f,
-   -0.5f,  0.5f, 0.0f, 
+    0.0f, 1.0f, 
+    1.0f, 0.0f, 
+    0.0f, 0.0f,  
+
+    0.0f, 1.0f, 
+    1.0f, 1.0f, 
+    1.0f, 0.0f,  
 };
 
-
+const float MS_PER_TICK = 1000.0f / 30.0f; 
 
 int main(int argc, char *argv[]) {
     if(SDL_Init(SDL_INIT_VIDEO) < 0) {
@@ -20,7 +24,6 @@ int main(int argc, char *argv[]) {
 
         return -1;
     } 
-    printf("test\n");
 
     // We need to initialize OpenGL before creating our window
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);                                    // Use double buffering instead of single buffering 
@@ -35,7 +38,7 @@ int main(int argc, char *argv[]) {
     int DISPLAY_WIDTH = 800; 
     int DISPLAY_HEIGHT = 600; 
     SDL_Window *window = SDL_CreateWindow("Title", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-            DISPLAY_WIDTH, DISPLAY_HEIGHT,  SDL_WINDOW_SHOWN);
+            DISPLAY_WIDTH, DISPLAY_HEIGHT, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
     if(!window) {
         SDL_LogError(SDL_LOG_CATEGORY_ERROR, "ERROR [Could not create a window]: %s", SDL_GetError());
 
@@ -79,10 +82,15 @@ int main(int argc, char *argv[]) {
     glBufferData(GL_ARRAY_BUFFER, sizeof(tri_vertices), tri_vertices, GL_STATIC_DRAW);
 
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), 0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), 0);
 
     glBindVertexArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    // Call game_init
+
+    uint64_t prev_tick = SDL_GetTicks64();
+    uint64_t lag = 0;
 
     bool running = true;
     while(running) {
@@ -132,12 +140,27 @@ int main(int argc, char *argv[]) {
                     } break;
             }
         }
+        
+        uint64_t current_tick = SDL_GetTicks64();
+        uint64_t elapsed_ticks = current_tick - prev_tick;
+        prev_tick = current_tick;
+        lag += elapsed_ticks;
+
+        while(lag >= MS_PER_TICK) {
+            // call game_update()
+
+            lag -= MS_PER_TICK;
+        }
+        float dt = lag / MS_PER_TICK;
+
+        // call game_render()
+
         glClear(GL_COLOR_BUFFER_BIT);
 
         glBindVertexArray(vao);
         glUseProgram(test_shader_program.id);
-        
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+
+        glDrawArrays(GL_TRIANGLES, 0, 6);
 
         SDL_GL_SwapWindow(window);
     }
