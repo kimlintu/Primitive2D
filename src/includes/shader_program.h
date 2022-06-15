@@ -1,8 +1,13 @@
 #ifndef SHADER_PROGRAM_H
 #define SHADER_PROGRAM_H
 
-#include <glad/glad.h>
-#include <SDL_opengl.h>
+#include "glad_i.h"
+#include "sdl_gl.h"
+
+#include <errno.h>
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 
 struct Shader {
     GLenum type;

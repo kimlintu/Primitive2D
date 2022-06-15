@@ -1,8 +1,4 @@
 #include "includes/shader_program.h"
-#include <errno.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
 
 #define INIT_BFR_SIZE 500
 
