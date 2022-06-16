@@ -69,3 +69,20 @@ void p2d_quad_render(P2DQuadEntity *quad) {
     glUseProgram(0);
     glBindVertexArray(0);
 }
+
+// Thanks to https://www.youtube.com/watch?v=RgxR6akghe8&t=803s
+bool key_pressed_this_frame(KeyboardKey key) {
+    bool was_pressed = (key.is_down && key.half_transition_count == 1) || (key.half_transition_count > 1);
+
+    return was_pressed;
+}
+
+bool key_released_this_frame(KeyboardKey key) {
+    bool was_released = (!key.is_down && key.half_transition_count == 1) || (key.half_transition_count > 1);
+
+    return was_released;
+}
+
+bool key_is_down(KeyboardKey key) {
+    return key.is_down;
+}

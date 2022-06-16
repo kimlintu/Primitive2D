@@ -3,6 +3,7 @@
 
 #include "../examples/breakout.cpp"
 
+#include "engine.h"
 #include "includes/shader_program.h"
 
 #include <stdio.h>
@@ -75,6 +76,8 @@ int main(int argc, char *argv[]) {
 
     game_init();
 
+    KeyboardState keyboard_state = {};
+
     uint64_t prev_tick = SDL_GetTicks64();
     uint64_t lag = 0;
 
@@ -87,38 +90,31 @@ int main(int argc, char *argv[]) {
         while(SDL_PollEvent(&event)) {
             switch(event.type) {
                 case SDL_KEYDOWN: 
-                    {
-                        SDL_Keycode key = event.key.keysym.sym;
-                        switch(key) {
-                            case SDLK_w: 
-                                {
-                                    printf("key pressed: ");
-                                    printf("W\n");
-                                } break;
-                            case SDLK_a: 
-                                {
-                                    printf("key pressed: ");
-                                    printf("A\n");
-                                } break;
-                        }
-                        fflush(stdout);
-                    } break;
                 case SDL_KEYUP: 
                     {
+                        bool key_is_down = (event.type == SDL_KEYDOWN);
+
+                        KeyboardKeyID key_id = MAX_KEY_AMT; // Invalid key id so we can check later if no keys were pressed
+
                         SDL_Keycode key = event.key.keysym.sym;
                         switch(key) {
                             case SDLK_w: 
                                 {
-                                    printf("key released: ");
-                                    printf("W\n");
+                                    key_id = KEY_W;
                                 } break;
                             case SDLK_a: 
                                 {
-                                    printf("key released: ");
-                                    printf("A\n");
+                                    key_id = KEY_A;
                                 } break;
                         } 
-                        fflush(stdout);
+
+                        // Only modify state if a valid key has been pressed
+                        if(key_id != MAX_KEY_AMT) {
+                            if(keyboard_state.keys[KEY_W].is_down != key_is_down) {
+                                keyboard_state.keys[KEY_W].is_down = key_is_down;
+                                keyboard_state.keys[KEY_W].half_transition_count += 1;
+                            }
+                        }
                     } break;
                 case SDL_QUIT: 
                     {
@@ -126,14 +122,20 @@ int main(int argc, char *argv[]) {
                     } break;
             }
         }
-        
+
         uint64_t current_tick = SDL_GetTicks64();
         uint64_t elapsed_ticks = current_tick - prev_tick;
         prev_tick = current_tick;
         lag += elapsed_ticks;
 
         while(lag >= MS_PER_TICK) {
-            game_update();
+            game_update(&keyboard_state);
+
+            // TODO: Is this the best place to clear the transition count? In this state it's incredibly hard to catch a 'double press',
+            // maybe the transition count should be reset at a slower rate indenpendently of the game update
+            for(int key_id = 0; key_id < MAX_KEY_AMT; key_id++) {
+                keyboard_state.keys[key_id].half_transition_count = 0;
+            }
 
             lag -= MS_PER_TICK;
         }

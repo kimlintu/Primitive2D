@@ -15,13 +15,13 @@ void game_init() {
 
     ShaderProgram test_shader_program;
     if(!create_shader_program(test_shaders, 2, &test_shader_program)) {
-        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "ERROR [Could not initialize GLAD with SDL function loader]");
+        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "ERROR [Could not create shader program]");
     }
 
     paddle = p2d_quad_entity_new(position, position, &paddle_model, test_shader_program.id);
 }
 
-void game_update() {
+void game_update(KeyboardState *keyboard_state) {
 }
 
 void game_render() {
