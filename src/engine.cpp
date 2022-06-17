@@ -59,6 +59,10 @@ P2DQuadModel p2d_quad_model_new(uint32_t width, uint32_t height) {
 P2DQuadEntity p2d_quad_entity_new(float position[2], float rotation[2], P2DQuadModel *model, GLuint shader_program_id) {
     P2DQuadEntity entity = {};
 
+    entity.position[0] = position[0];
+    entity.position[1] = position[1];
+    entity.rotation[0] = rotation[0];
+    entity.rotation[1] = rotation[1];
     entity.model = model;
     entity.shader_program_id = shader_program_id;
     
@@ -71,7 +75,10 @@ void p2d_quad_render(P2DQuadEntity *quad, float dt) {
 
     float pos_x = quad->position[0] + (quad->velocity[0] * dt);
     float pos_y = quad->position[1] + (quad->velocity[1] * dt);
+
     model = glm::translate(model, glm::vec3(pos_x, pos_y, 1.0f));
+    model = glm::scale(model, glm::vec3(quad->model->width, quad->model->height, 1.0f));
+
     shader_program_load_mat4(quad->shader_program_id, "model", model);
 
     glBindVertexArray(quad->model->vao);
