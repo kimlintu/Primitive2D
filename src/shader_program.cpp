@@ -90,3 +90,9 @@ int create_shader_program(struct Shader *shaders, uint32_t n, struct ShaderProgr
     free(attached_shaders);
     return 1;
 }
+
+#include <glm/gtc/type_ptr.hpp>
+void shader_program_load_mat4(GLuint program_id, const GLchar *uniform_name, glm::mat4 matrix) {
+    GLint location = glGetUniformLocation(program_id, uniform_name);
+    glUniformMatrix4fv(location, (GLsizei)1, GL_FALSE, glm::value_ptr(matrix));
+}

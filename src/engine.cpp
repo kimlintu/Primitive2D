@@ -1,5 +1,10 @@
 #include "engine.h"
-#include <stdio.h>
+#include "includes/shader_program.h"
+
+#include <glm/vec3.hpp>
+#include <glm/mat4x4.hpp>
+#include <glm/matrix.hpp>
+#include <glm/ext/matrix_transform.hpp>
 
 // TODO: load textures
 P2DQuadModel p2d_quad_model_new(uint32_t width, uint32_t height) {
@@ -60,9 +65,16 @@ P2DQuadEntity p2d_quad_entity_new(float position[2], float rotation[2], P2DQuadM
     return entity;
 }
 
-void p2d_quad_render(P2DQuadEntity *quad) {
-    glBindVertexArray(quad->model->vao);
+void p2d_quad_render(P2DQuadEntity *quad, float dt) {
     glUseProgram(quad->shader_program_id);
+    glm::mat4 model = glm::mat4(1.0f);
+
+    float pos_x = quad->position[0] + (quad->velocity[0] * dt);
+    float pos_y = quad->position[1] + (quad->velocity[1] * dt);
+    model = glm::translate(model, glm::vec3(pos_x, pos_y, 1.0f));
+    shader_program_load_mat4(quad->shader_program_id, "model", model);
+
+    glBindVertexArray(quad->model->vao);
 
     glDrawArrays(GL_TRIANGLES, 0, 6);
 

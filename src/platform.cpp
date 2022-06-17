@@ -95,13 +95,21 @@ int main(int argc, char *argv[]) {
                                 {
                                     key_id = KEY_A;
                                 } break;
+                            case SDLK_s: 
+                                {
+                                    key_id = KEY_S;
+                                } break;
+                            case SDLK_d: 
+                                {
+                                    key_id = KEY_D;
+                                } break;
                         } 
 
                         // Only modify state if a valid key has been pressed
                         if(key_id != MAX_KEY_AMT) {
-                            if(keyboard_state.keys[KEY_W].is_down != key_is_down) {
-                                keyboard_state.keys[KEY_W].is_down = key_is_down;
-                                keyboard_state.keys[KEY_W].half_transition_count += 1;
+                            if(keyboard_state.keys[key_id].is_down != key_is_down) {
+                                keyboard_state.keys[key_id].is_down = key_is_down;
+                                keyboard_state.keys[key_id].half_transition_count += 1;
                             }
                         }
                     } break;
@@ -132,7 +140,7 @@ int main(int argc, char *argv[]) {
 
         glClear(GL_COLOR_BUFFER_BIT);
 
-        game_render();
+        game_render(dt);
 
         SDL_GL_SwapWindow(window);
     }

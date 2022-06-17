@@ -22,8 +22,30 @@ void game_init() {
 }
 
 void game_update(KeyboardState *keyboard_state) {
+    paddle.position[0] += paddle.velocity[0];
+    paddle.position[1] += paddle.velocity[1];
+
+    paddle.velocity[0] = 0.0f;
+    paddle.velocity[1] = 0.0f;
+
+    float speed = 0.1f;
+    if(key_is_down(keyboard_state->keys[KEY_A])) {
+        paddle.velocity[0] = -speed;
+    }
+
+    if(key_is_down(keyboard_state->keys[KEY_D])) {
+        paddle.velocity[0] = speed;
+    }
+
+    if(key_is_down(keyboard_state->keys[KEY_S])) {
+        paddle.velocity[1] = -speed;
+    }
+
+    if(key_is_down(keyboard_state->keys[KEY_W])) {
+        paddle.velocity[1] = speed;
+    }
 }
 
-void game_render() {
-    p2d_quad_render(&paddle);
+void game_render(float dt) {
+    p2d_quad_render(&paddle, dt);
 }
