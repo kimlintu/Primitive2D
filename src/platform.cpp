@@ -3,7 +3,7 @@
 
 #include "../examples/breakout.cpp"
 
-#include "engine.h"
+#include "includes/engine.h"
 #include "includes/shader_program.h"
 
 #include <stdio.h>

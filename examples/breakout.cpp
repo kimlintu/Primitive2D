@@ -1,4 +1,4 @@
-#include "../src/engine.h"
+#include "../src/includes/engine.h"
 #include "../src/includes/shader_program.h"
 
 #include <glm/mat4x4.hpp>
@@ -8,9 +8,12 @@ static P2DQuadModel paddle_model;
 static P2DQuadEntity paddle;
 
 void game_init() {
-    paddle_model = p2d_quad_model_new(32, 32);
+    // TODO: Here the user should be able to pass the initial window size and
+    // additional parameters
+    
+    paddle_model = p2d_quad_model_new(64, 32);
 
-    float position[2] = { 0.0f, 0.0f };
+    float position[2] = { ((800.0f / 2.0f) - (paddle_model.width / 2.0f)), (600.0f - paddle_model.height - 16.0f) };
     // load shaders
     Shader test_vertex_shader = { GL_VERTEX_SHADER, "../src/shaders/test.vert" };
     Shader test_fragment_shader = { GL_FRAGMENT_SHADER, "../src/shaders/test.frag" };

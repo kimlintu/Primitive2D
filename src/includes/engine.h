@@ -22,7 +22,7 @@ struct P2DQuadModel p2d_quad_model_new(uint32_t width, uint32_t height);
 
 struct P2DQuadEntity {
     P2DQuadModel *model;
-    float position[2];
+    float position[2]; // TODO: change these to glm::vec2 instead
     float velocity[2];
     float rotation[2];
     GLuint shader_program_id;
