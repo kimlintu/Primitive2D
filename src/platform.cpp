@@ -22,7 +22,7 @@ const float MS_PER_TICK = 1000.0f / 30.0f;
 
 int main(int argc, char *argv[]) {
     if(SDL_Init(SDL_INIT_VIDEO) < 0) {
-        // TODO: Error logging
+        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "ERROR [Could not initialize SDL]: %s", SDL_GetError());
 
         return -1;
     } 
@@ -62,17 +62,6 @@ int main(int argc, char *argv[]) {
 
     glViewport(0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT);
     glClearColor(0.3f, 0.5f, 0.0f, 1.0f);
-
-    Shader test_vertex_shader = { GL_VERTEX_SHADER, "../src/shaders/test.vert" };
-    Shader test_fragment_shader = { GL_FRAGMENT_SHADER, "../src/shaders/test.frag" };
-    Shader test_shaders[2] = { test_vertex_shader, test_fragment_shader };
-
-    ShaderProgram test_shader_program;
-    if(!create_shader_program(test_shaders, 2, &test_shader_program)) {
-        SDL_LogError(SDL_LOG_CATEGORY_ERROR, "ERROR [Could not initialize GLAD with SDL function loader]");
-
-        return -1;
-    }
 
     game_init();
 
