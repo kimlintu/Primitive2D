@@ -10,23 +10,23 @@
 P2DQuadModel p2d_quad_model_new(uint32_t width, uint32_t height) {
     P2DQuadModel model = {};
 
-    model.vertices[0].pos[0] = 0.0f;
-    model.vertices[0].pos[1] = 1.0f;
+    model.vertices[0].pos.x = 0.0f;
+    model.vertices[0].pos.y = 1.0f;
 
-    model.vertices[1].pos[0] = 1.0f;
-    model.vertices[1].pos[1] = 1.0f;
+    model.vertices[1].pos.x = 1.0f;
+    model.vertices[1].pos.y = 1.0f;
 
-    model.vertices[2].pos[0] = 1.0f;
-    model.vertices[2].pos[1] = 0.0f;
+    model.vertices[2].pos.x = 1.0f;
+    model.vertices[2].pos.y = 0.0f;
 
-    model.vertices[3].pos[0] = 0.0f;
-    model.vertices[3].pos[1] = 0.0f;
+    model.vertices[3].pos.x = 0.0f;
+    model.vertices[3].pos.y = 0.0f;
 
-    model.vertices[4].pos[0] = 0.0f;
-    model.vertices[4].pos[1] = 1.0f;
+    model.vertices[4].pos.x = 0.0f;
+    model.vertices[4].pos.y = 1.0f;
 
-    model.vertices[5].pos[0] = 1.0f;
-    model.vertices[5].pos[1] = 0.0f;
+    model.vertices[5].pos.x = 1.0f;
+    model.vertices[5].pos.y = 0.0f;
 
     model.width = width;
     model.height = height;
@@ -56,13 +56,13 @@ P2DQuadModel p2d_quad_model_new(uint32_t width, uint32_t height) {
     return model;
 }
 
-P2DQuadEntity p2d_quad_entity_new(float position[2], float rotation[2], P2DQuadModel *model, GLuint shader_program_id) {
+P2DQuadEntity p2d_quad_entity_new(Vector2 position, Vector2 rotation, P2DQuadModel *model, GLuint shader_program_id) {
     P2DQuadEntity entity = {};
 
-    entity.position[0] = position[0];
-    entity.position[1] = position[1];
-    entity.rotation[0] = rotation[0];
-    entity.rotation[1] = rotation[1];
+    entity.position.x = position.x;
+    entity.position.y = position.y;
+    entity.rotation.x = rotation.x;
+    entity.rotation.y = rotation.y;
     entity.model = model;
     entity.shader_program_id = shader_program_id;
     
@@ -73,8 +73,8 @@ void p2d_quad_render(P2DQuadEntity *quad, float dt) {
     glUseProgram(quad->shader_program_id);
     glm::mat4 model = glm::mat4(1.0f);
 
-    float pos_x = quad->position[0] + (quad->velocity[0] * dt);
-    float pos_y = quad->position[1] + (quad->velocity[1] * dt);
+    float pos_x = quad->position.x + (quad->velocity.x * dt);
+    float pos_y = quad->position.y + (quad->velocity.y * dt);
 
     model = glm::translate(model, glm::vec3(pos_x, pos_y, 1.0f));
     model = glm::scale(model, glm::vec3(quad->model->width, quad->model->height, 1.0f));

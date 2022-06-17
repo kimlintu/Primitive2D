@@ -5,9 +5,14 @@
 #include "includes/glad_i.h"
 #include "includes/sdl_gl.h"
 
+struct Vector2 {
+    float x;
+    float y;
+};
+
 struct Vertex {
-    float pos[2]; // position coordinates
-    float tex[2]; // texture coordinates
+    Vector2 pos; // TODO: replace with glm::vec2?
+    Vector2 tex;
 }; 
 
 struct P2DQuadModel {
@@ -22,13 +27,13 @@ struct P2DQuadModel p2d_quad_model_new(uint32_t width, uint32_t height);
 
 struct P2DQuadEntity {
     P2DQuadModel *model;
-    float position[2]; // TODO: change these to glm::vec2 instead
-    float velocity[2];
-    float rotation[2];
+    Vector2 position; // TODO: replace with glm::vec2?
+    Vector2 velocity;
+    Vector2 rotation;
     GLuint shader_program_id;
 };
 
-P2DQuadEntity p2d_quad_entity_new(float position[2], float rotation[2], P2DQuadModel *model, GLuint shader_program_id);
+P2DQuadEntity p2d_quad_entity_new(Vector2 position, Vector2 rotation, P2DQuadModel *model, GLuint shader_program_id); 
 void p2d_quad_render(P2DQuadEntity *quad, float dt);
 
 enum KeyboardKeyID {
