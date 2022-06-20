@@ -1,4 +1,3 @@
-// TODO: move this file
 #ifndef ENGINE_H
 #define ENGINE_H
 
@@ -17,7 +16,7 @@ struct Vertex {
 
 struct P2DQuadModel {
     Vertex vertices[6];
-    uint32_t width;
+    uint32_t width; // TODO: If we move out width & height from the model we would only need 1 instance of this struct
     uint32_t height;
     GLuint vao;
     GLuint vbo;
@@ -35,6 +34,27 @@ struct P2DQuadEntity {
 
 P2DQuadEntity p2d_quad_entity_new(Vector2 position, Vector2 rotation, P2DQuadModel *model, GLuint shader_program_id); 
 void p2d_quad_render(P2DQuadEntity *quad, float dt);
+
+struct P2DCircleModel {
+    Vertex vertices[10];
+    uint32_t width; // TODO: If we move out width & height from the model we would only need 1 instance of this struct
+    uint32_t height;
+    GLuint vao;
+    GLuint vbo;
+};
+
+P2DCircleModel p2d_circle_model_new(uint32_t width, uint32_t height);
+
+struct P2DCircleEntity {
+    P2DCircleModel *model;
+    Vector2 position; // TODO: replace with glm::vec2?
+    Vector2 velocity;
+    Vector2 rotation;
+    GLuint shader_program_id;
+};
+
+P2DCircleEntity p2d_circle_entity_new(Vector2 position, Vector2 rotation, P2DCircleModel *model, GLuint shader_program_id); 
+void p2d_circle_render(P2DCircleEntity *circle, float dt);
 
 enum KeyboardKeyID {
     KEY_W,
