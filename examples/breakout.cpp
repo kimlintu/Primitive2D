@@ -1,5 +1,6 @@
 #include "../src/includes/engine.h"
 #include "../src/includes/shader_program.h"
+#include "../src/includes/texture.h"
 
 #include <glm/mat4x4.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -11,10 +12,14 @@ static P2DCircleModel ball_model;
 static P2DCircleEntity ball;
 
 void game_init() {
+    Texture t = load_texture("../res/test.png");
+
     // TODO: Here the user should be able to pass the initial window size and
     // additional parameters
 
     // load shaders
+    // TODO: Maybe the're should be 'default' shaders that get loaded when creating a model,
+    // and the user can specify if they want to use their own shaders.
     Shader test_vertex_shader = { GL_VERTEX_SHADER, "../src/shaders/test.vert" };
     Shader test_fragment_shader = { GL_FRAGMENT_SHADER, "../src/shaders/test.frag" };
     Shader test_shaders[2] = { test_vertex_shader, test_fragment_shader };

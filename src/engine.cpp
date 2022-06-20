@@ -64,13 +64,13 @@ P2DQuadEntity p2d_quad_entity_new(Vector2 position, Vector2 rotation, P2DQuadMod
     entity.rotation.x = rotation.x;
     entity.rotation.y = rotation.y;
     entity.model = model;
-    entity.shader_program_id = shader_program_id;
+    entity.shader_program.id = shader_program_id;
     
     return entity;
 }
 
 void p2d_quad_render(P2DQuadEntity *quad, float dt) {
-    glUseProgram(quad->shader_program_id);
+    glUseProgram(quad->shader_program.id);
     glm::mat4 model = glm::mat4(1.0f);
 
     float pos_x = quad->position.x + (quad->velocity.x * dt);
@@ -79,7 +79,7 @@ void p2d_quad_render(P2DQuadEntity *quad, float dt) {
     model = glm::translate(model, glm::vec3(pos_x, pos_y, 1.0f));
     model = glm::scale(model, glm::vec3(quad->model->width, quad->model->height, 1.0f));
 
-    shader_program_load_mat4(quad->shader_program_id, "model", model);
+    shader_program_load_mat4(quad->shader_program.id, "model", model);
 
     glBindVertexArray(quad->model->vao);
 
@@ -170,13 +170,13 @@ P2DCircleEntity p2d_circle_entity_new(Vector2 position, Vector2 rotation, P2DCir
     entity.velocity.x = 2.0f;
     entity.velocity.y = 5.0f;
     entity.model = model;
-    entity.shader_program_id = shader_program_id;
+    entity.shader_program.id = shader_program_id;
     
     return entity;
 }
 
 void p2d_circle_render(P2DCircleEntity *circle, float dt) {
-    glUseProgram(circle->shader_program_id);
+    glUseProgram(circle->shader_program.id);
     glm::mat4 model = glm::mat4(1.0f);
 
     float pos_x = circle->position.x + (circle->velocity.x * dt);
@@ -185,7 +185,7 @@ void p2d_circle_render(P2DCircleEntity *circle, float dt) {
     model = glm::translate(model, glm::vec3(pos_x, pos_y, 1.0f));
     model = glm::scale(model, glm::vec3(circle->model->width, circle->model->height, 1.0f));
 
-    shader_program_load_mat4(circle->shader_program_id, "model", model);
+    shader_program_load_mat4(circle->shader_program.id, "model", model);
 
     glBindVertexArray(circle->model->vao);
 

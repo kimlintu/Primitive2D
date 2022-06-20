@@ -4,6 +4,8 @@
 #include "includes/glad_i.h"
 #include "includes/sdl_gl.h"
 
+#include "includes/shader_program.h"
+
 struct Vector2 {
     float x;
     float y;
@@ -29,7 +31,7 @@ struct P2DQuadEntity {
     Vector2 position; // TODO: replace with glm::vec2?
     Vector2 velocity;
     Vector2 rotation;
-    GLuint shader_program_id;
+    ShaderProgram shader_program;
 };
 
 P2DQuadEntity p2d_quad_entity_new(Vector2 position, Vector2 rotation, P2DQuadModel *model, GLuint shader_program_id); 
@@ -50,7 +52,7 @@ struct P2DCircleEntity {
     Vector2 position; // TODO: replace with glm::vec2?
     Vector2 velocity;
     Vector2 rotation;
-    GLuint shader_program_id;
+    ShaderProgram shader_program;
 };
 
 P2DCircleEntity p2d_circle_entity_new(Vector2 position, Vector2 rotation, P2DCircleModel *model, GLuint shader_program_id); 
