@@ -5,58 +5,47 @@
 #include "includes/sdl_gl.h"
 
 #include "includes/shader_program.h"
+#include "includes/vertex.h"
 
-struct Vector2 {
-    float x;
-    float y;
-};
-
-struct Vertex {
-    Vector2 pos; // TODO: replace with glm::vec2?
-    Vector2 tex;
-}; 
+void P2D_init();
 
 struct P2DQuadModel {
     Vertex vertices[6];
-    uint32_t width; // TODO: If we move out width & height from the model we would only need 1 instance of this struct
-    uint32_t height;
     GLuint vao;
     GLuint vbo;
 };
-
-struct P2DQuadModel p2d_quad_model_new(uint32_t width, uint32_t height);
 
 struct P2DQuadEntity {
     P2DQuadModel *model;
     Vector2 position; // TODO: replace with glm::vec2?
     Vector2 velocity;
     Vector2 rotation;
+    uint32_t width; 
+    uint32_t height;
     ShaderProgram shader_program;
 };
 
-P2DQuadEntity p2d_quad_entity_new(Vector2 position, Vector2 rotation, P2DQuadModel *model, GLuint shader_program_id); 
+P2DQuadEntity *p2d_quad_entity_new(Vector2 position, Vector2 rotation, uint32_t width, uint32_t height, Shader shaders[2]);
 void p2d_quad_render(P2DQuadEntity *quad, float dt);
 
-struct P2DCircleModel {
+struct P2DEllipseModel {
     Vertex vertices[10];
-    uint32_t width; // TODO: If we move out width & height from the model we would only need 1 instance of this struct
-    uint32_t height;
     GLuint vao;
     GLuint vbo;
 };
 
-P2DCircleModel p2d_circle_model_new(uint32_t width, uint32_t height);
-
-struct P2DCircleEntity {
-    P2DCircleModel *model;
+struct P2DEllipseEntity {
+    P2DEllipseModel *model;
     Vector2 position; // TODO: replace with glm::vec2?
     Vector2 velocity;
     Vector2 rotation;
+    uint32_t width; 
+    uint32_t height;
     ShaderProgram shader_program;
 };
 
-P2DCircleEntity p2d_circle_entity_new(Vector2 position, Vector2 rotation, P2DCircleModel *model, GLuint shader_program_id); 
-void p2d_circle_render(P2DCircleEntity *circle, float dt);
+P2DEllipseEntity *p2d_ellipse_entity_new(Vector2 position, Vector2 rotation, uint32_t width, uint32_t height, Shader shaders[2]);
+void p2d_ellipse_render(P2DEllipseEntity *ellipse, float dt);
 
 enum KeyboardKeyID {
     KEY_W,
