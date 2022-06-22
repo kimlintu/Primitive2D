@@ -9,7 +9,10 @@ static P2DQuadEntity *paddle;
 
 static P2DEllipseEntity *ball;
 
+Texture test;
+
 void game_init() {
+    test = load_texture("../res/test.png");
     P2D_init();
 
     // TODO: Here the user should be able to pass the initial window size and
@@ -44,6 +47,7 @@ void game_init() {
         ball->velocity.x = 2.0f;
         ball->velocity.y = 2.0f;
     }
+    glBindTexture(GL_TEXTURE_2D, test.id);
 }
 
 void game_update(KeyboardState *keyboard_state) {

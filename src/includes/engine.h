@@ -10,7 +10,7 @@
 void P2D_init();
 
 struct P2DQuadModel {
-    Vertex vertices[6];
+    PosVertex vertices[6];
     GLuint vao;
     GLuint vbo;
 };
@@ -29,7 +29,7 @@ P2DQuadEntity *p2d_quad_entity_new(Vector2 position, Vector2 rotation, uint32_t 
 void p2d_quad_render(P2DQuadEntity *quad, float dt);
 
 struct P2DEllipseModel {
-    Vertex vertices[10];
+    PosVertex vertices[10];
     GLuint vao;
     GLuint vbo;
 };

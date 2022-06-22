@@ -40,7 +40,7 @@ void p2d_quad_model_init() {
     p2d_g_quad_model.vertices[5].pos.x = 1.0f;
     p2d_g_quad_model.vertices[5].pos.y = 0.0f;
 
-    load_gl_buffers(p2d_g_quad_model.vertices, 6, &p2d_g_quad_model.vbo, &p2d_g_quad_model.vao);
+    load_gl_buffers_pv(p2d_g_quad_model.vertices, 6, &p2d_g_quad_model.vbo, &p2d_g_quad_model.vao);
 }
 
 int p2d_load_entity_shaders(ShaderProgram *shader_program, Shader shaders[2]) {
@@ -160,7 +160,7 @@ void p2d_ellipse_model_init() {
     p2d_g_ellipse_model.vertices[9].pos.x = 0.0f;
     p2d_g_ellipse_model.vertices[9].pos.y = 1.0f;
 
-    load_gl_buffers(p2d_g_ellipse_model.vertices, 10, &p2d_g_ellipse_model.vbo, &p2d_g_ellipse_model.vao);
+    load_gl_buffers_pv(p2d_g_ellipse_model.vertices, 10, &p2d_g_ellipse_model.vbo, &p2d_g_ellipse_model.vao);
 }
 
 P2DEllipseEntity *p2d_ellipse_entity_new(Vector2 position, Vector2 rotation, uint32_t width, uint32_t height, Shader shaders[2]) {
