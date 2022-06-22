@@ -5,6 +5,7 @@
 #include "includes/sdl_gl.h"
 
 #include "includes/shader_program.h"
+#include "includes/texture.h"
 #include "includes/vertex.h"
 
 void P2D_init();
@@ -15,7 +16,8 @@ struct P2DQuadModel {
     GLuint vbo;
 };
 
-struct P2DQuadEntity {
+// TODO: Extract joint entity parameters (right now everything except model) to a struct
+struct P2DTexQuadEntity {
     P2DQuadModel *model;
     Vector2 position; // TODO: replace with glm::vec2?
     Vector2 velocity;
@@ -23,10 +25,11 @@ struct P2DQuadEntity {
     uint32_t width; 
     uint32_t height;
     ShaderProgram shader_program;
+    Texture texture;
 };
 
-P2DQuadEntity *p2d_quad_entity_new(Vector2 position, Vector2 rotation, uint32_t width, uint32_t height, Shader shaders[2]);
-void p2d_quad_render(P2DQuadEntity *quad, float dt);
+P2DTexQuadEntity *p2d_tex_quad_entity_new(Vector2 position, Vector2 rotation, uint32_t width, uint32_t height,  Shader shaders[2], const char *texture_path);
+void p2d_quad_render(P2DTexQuadEntity *quad, float dt);
 
 struct P2DEllipseModel {
     PosVertex vertices[10];
@@ -34,7 +37,7 @@ struct P2DEllipseModel {
     GLuint vbo;
 };
 
-struct P2DEllipseEntity {
+struct P2DColorEllipseEntity {
     P2DEllipseModel *model;
     Vector2 position; // TODO: replace with glm::vec2?
     Vector2 velocity;
@@ -42,10 +45,11 @@ struct P2DEllipseEntity {
     uint32_t width; 
     uint32_t height;
     ShaderProgram shader_program;
+    float color[3];
 };
 
-P2DEllipseEntity *p2d_ellipse_entity_new(Vector2 position, Vector2 rotation, uint32_t width, uint32_t height, Shader shaders[2]);
-void p2d_ellipse_render(P2DEllipseEntity *ellipse, float dt);
+P2DColorEllipseEntity *p2d_col_ellipse_entity_new(Vector2 position, Vector2 rotation, uint32_t width, uint32_t height, Shader shaders[2], float rgb_color[3]);
+void p2d_ellipse_render(P2DColorEllipseEntity *ellipse, float dt);
 
 enum KeyboardKeyID {
     KEY_W,

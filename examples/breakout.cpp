@@ -5,14 +5,11 @@
 #include <glm/mat4x4.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-static P2DQuadEntity *paddle;
+static P2DTexQuadEntity *paddle;
 
-static P2DEllipseEntity *ball;
-
-Texture test;
+static P2DColorEllipseEntity *ball;
 
 void game_init() {
-    test = load_texture("../res/test.png");
     P2D_init();
 
     // TODO: Here the user should be able to pass the initial window size and
@@ -29,25 +26,27 @@ void game_init() {
     Vector2 paddle_position; 
     paddle_position.x = (800.0f / 2.0f) - (paddle_width / 2.0f);
     paddle_position.y = (600.0f - paddle_height - 16.0f);
-    paddle = p2d_quad_entity_new(paddle_position, paddle_position, paddle_width, paddle_height, test_default_shaders);
+    paddle = p2d_tex_quad_entity_new(paddle_position, paddle_position, paddle_width, paddle_height, test_default_shaders, "../res/test.png");
     if(!paddle) {
         // TODO: error handling
+        exit(-1);
     }
 
     // Ball 
     // TODO: Maybe the ball should be a quad as well, since we're going to use sprites anyway 
-    test_default_shaders[0].src_path = NULL;
-    test_default_shaders[1].src_path = NULL;
+    test_default_shaders[0].src_path = "../src/shaders/def_color_ellipse.vert";
+    test_default_shaders[1].src_path = "../src/shaders/def_color_ellipse.frag";
     float ball_height = 32;
     Vector2 ball_position = { (800.0f / 2.0f), (600.0f / 2.0f) - (ball_height / 2.0f) };
-    ball = p2d_ellipse_entity_new(ball_position, ball_position, 16, 16, test_default_shaders);
+    float ball_color[3] = { 0.4f, 0.64f, 0.9f };
+    ball = p2d_col_ellipse_entity_new(ball_position, ball_position, 16, 16, test_default_shaders, ball_color);
     if(!ball) {
         // TODO: error handling
+        exit(-1);
     } else {
         ball->velocity.x = 2.0f;
         ball->velocity.y = 2.0f;
     }
-    glBindTexture(GL_TEXTURE_2D, test.id);
 }
 
 void game_update(KeyboardState *keyboard_state) {

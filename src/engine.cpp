@@ -12,12 +12,12 @@ static float PI = 3.14159265359f;
 
 #define P2D_MAX_QUAD_ENTITIES 256
 static P2DQuadModel p2d_g_quad_model;
-static P2DQuadEntity p2d_g_quad_entities[P2D_MAX_QUAD_ENTITIES] = {};
+static P2DTexQuadEntity p2d_g_quad_entities[P2D_MAX_QUAD_ENTITIES] = {};
 static uint8_t p2d_g_active_quad_entities[P2D_MAX_QUAD_ENTITIES] = {};
 
 #define P2D_MAX_ELLIPSE_ENTITIES 256
 static P2DEllipseModel p2d_g_ellipse_model;
-static P2DEllipseEntity p2d_g_ellipse_entities[P2D_MAX_ELLIPSE_ENTITIES] = {};
+static P2DColorEllipseEntity p2d_g_ellipse_entities[P2D_MAX_ELLIPSE_ENTITIES] = {};
 static uint8_t p2d_g_active_ellipse_entities[P2D_MAX_ELLIPSE_ENTITIES] = {};
 
 // TODO: load textures
@@ -45,6 +45,7 @@ void p2d_quad_model_init() {
 
 int p2d_load_entity_shaders(ShaderProgram *shader_program, Shader shaders[2]) {
     // If user did not specify their own shaders, we just load some default ones
+    // TODO: This should be moved outside this function, since different entities will have different default shaders
     if(!shaders[0].src_path) {
         shaders[0].src_path = "../src/shaders/test.vert";
         // TODO: Maybe the path should be reset to NULL before returning
@@ -67,7 +68,7 @@ int p2d_load_entity_shaders(ShaderProgram *shader_program, Shader shaders[2]) {
     glUseProgram(0);
 }
 
-P2DQuadEntity *p2d_quad_entity_new(Vector2 position, Vector2 rotation, uint32_t width, uint32_t height, Shader shaders[2]) {
+P2DTexQuadEntity *p2d_tex_quad_entity_new(Vector2 position, Vector2 rotation, uint32_t width, uint32_t height,  Shader shaders[2], const char *texture_path) {
     uint8_t entity_id = 0;
     // Find available entity
     while(p2d_g_active_quad_entities[entity_id] && (entity_id < P2D_MAX_QUAD_ENTITIES)) {
@@ -82,8 +83,15 @@ P2DQuadEntity *p2d_quad_entity_new(Vector2 position, Vector2 rotation, uint32_t 
     }
     p2d_g_active_quad_entities[entity_id] = 1;
 
-    P2DQuadEntity *entity = (p2d_g_quad_entities + entity_id);
+    P2DTexQuadEntity *entity = (p2d_g_quad_entities + entity_id);
     if(!p2d_load_entity_shaders(&entity->shader_program, shaders)) {
+        // TODO: error handling
+
+        return NULL;
+    }
+
+    entity->texture = load_texture(texture_path);
+    if(!entity->texture.id) {
         // TODO: error handling
 
         return NULL;
@@ -100,7 +108,8 @@ P2DQuadEntity *p2d_quad_entity_new(Vector2 position, Vector2 rotation, uint32_t 
     return entity;
 }
 
-void p2d_quad_render(P2DQuadEntity *quad, float dt) {
+void p2d_quad_render(P2DTexQuadEntity *quad, float dt) {
+    glBindTexture(GL_TEXTURE_2D, quad->texture.id);
     glUseProgram(quad->shader_program.id);
     glm::mat4 model = glm::mat4(1.0f);
 
@@ -118,6 +127,7 @@ void p2d_quad_render(P2DQuadEntity *quad, float dt) {
 
     glUseProgram(0);
     glBindVertexArray(0);
+    glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 void p2d_ellipse_model_init() {
@@ -163,7 +173,7 @@ void p2d_ellipse_model_init() {
     load_gl_buffers_pv(p2d_g_ellipse_model.vertices, 10, &p2d_g_ellipse_model.vbo, &p2d_g_ellipse_model.vao);
 }
 
-P2DEllipseEntity *p2d_ellipse_entity_new(Vector2 position, Vector2 rotation, uint32_t width, uint32_t height, Shader shaders[2]) {
+P2DColorEllipseEntity *p2d_col_ellipse_entity_new(Vector2 position, Vector2 rotation, uint32_t width, uint32_t height, Shader shaders[2], float rgb_color[3]) {
     uint8_t entity_id = 0;
     // Find available entity
     while(p2d_g_active_ellipse_entities[entity_id] && (entity_id < P2D_MAX_ELLIPSE_ENTITIES)) {
@@ -178,12 +188,17 @@ P2DEllipseEntity *p2d_ellipse_entity_new(Vector2 position, Vector2 rotation, uin
     }
     p2d_g_active_ellipse_entities[entity_id] = 1;
 
-    P2DEllipseEntity *entity = (p2d_g_ellipse_entities + entity_id);
+    P2DColorEllipseEntity *entity = (p2d_g_ellipse_entities + entity_id);
     if(!p2d_load_entity_shaders(&entity->shader_program, shaders)) {
         // TODO: error handling
 
         return NULL;
     }
+
+    // Load color uniform variable
+    glUseProgram(entity->shader_program.id);
+    glUniform1fv(glGetUniformLocation(entity->shader_program.id, "unfRGBColor"), 3, rgb_color);
+    glUseProgram(0);
 
     entity->position.x = position.x;
     entity->position.y = position.y;
@@ -196,7 +211,7 @@ P2DEllipseEntity *p2d_ellipse_entity_new(Vector2 position, Vector2 rotation, uin
     return entity;
 }
 
-void p2d_ellipse_render(P2DEllipseEntity *ellipse, float dt) {
+void p2d_ellipse_render(P2DColorEllipseEntity *ellipse, float dt) {
     glUseProgram(ellipse->shader_program.id);
     glm::mat4 model = glm::mat4(1.0f);
 
