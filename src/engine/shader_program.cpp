@@ -96,3 +96,8 @@ void shader_program_load_mat4(GLuint program_id, const GLchar *uniform_name, glm
     GLint location = glGetUniformLocation(program_id, uniform_name);
     glUniformMatrix4fv(location, (GLsizei)1, GL_FALSE, glm::value_ptr(matrix));
 }
+
+void shader_program_load_float(GLuint program_id, const GLchar *uniform_name, float f) {
+    GLint location = glGetUniformLocation(program_id, uniform_name);
+    glUniform1f(location, (GLfloat)f);
+}

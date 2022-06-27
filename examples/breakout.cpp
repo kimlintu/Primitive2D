@@ -9,13 +9,7 @@ static P2DTexQuadEntity *paddle;
 
 static P2DColorEllipseEntity *ball;
 
-/*
-struct FontBitmap {
-    Texture bitmap;
-};
-
-FontBitmap font_bitmap;
-*/
+static P2DString str; 
 
 void game_init() {
     P2D_init();
@@ -55,6 +49,9 @@ void game_init() {
         ball->velocity.x = 2.0f;
         ball->velocity.y = 2.0f;
     }
+
+    Vector2 str_pos = { 2.0f, 10.0f };
+    str = p2d_put_string("ABC DEF", str_pos); 
 }
 
 void game_update(KeyboardState *keyboard_state) {
@@ -120,4 +117,5 @@ void game_render(float dt) {
 
     p2d_quad_render(paddle, dt);
     p2d_ellipse_render(ball, dt);
+    p2d_string_render(&str);
 }

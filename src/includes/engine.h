@@ -52,6 +52,19 @@ struct P2DColorEllipseEntity {
 P2DColorEllipseEntity *p2d_col_ellipse_entity_new(Vector2 position, Vector2 rotation, uint32_t width, uint32_t height, Shader shaders[2], float rgb_color[3]);
 void p2d_ellipse_render(P2DColorEllipseEntity *ellipse, float dt);
 
+struct P2DChar {
+    Vector2 pos;
+    float tex_offset;
+};
+
+struct P2DString {
+    P2DChar *str;
+    uint8_t len; // TODO: Maybe something bigger than a byte 
+};
+
+P2DString p2d_put_string(const char *str, Vector2 str_pos);
+void p2d_string_render(P2DString *str);
+
 enum KeyboardKeyID {
     KEY_W,
     KEY_A,

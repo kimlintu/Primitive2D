@@ -231,6 +231,64 @@ void p2d_ellipse_render(P2DColorEllipseEntity *ellipse, float dt) {
     glBindVertexArray(0);
 }
 
+Texture p2d_g_font_bitmap;
+ShaderProgram p2d_g_font_shader_program;
+
+void p2d_font_bitmap_init() {
+    p2d_g_font_bitmap = load_texture("../res/font_bitmap.png");
+
+    Shader shaders[2] = { { GL_VERTEX_SHADER, "../src/shaders/def_font.vert" }, { GL_FRAGMENT_SHADER, "../src/shaders/def_font.frag" } };
+    if(!p2d_load_entity_shaders(&p2d_g_font_shader_program, shaders)) {
+        // TODO: error handling
+    }
+}
+
+P2DString p2d_put_string(const char *str, Vector2 str_pos) {
+    P2DString new_str = {};
+
+    size_t str_len = strnlen(str, 256);
+    new_str.len = str_len;
+    
+    new_str.str = (P2DChar *)malloc(sizeof(P2DChar) * str_len);
+
+    for(int i = 0; i < str_len; i++) {
+        new_str.str[i].pos.x = str_pos.x + (i * 64.0f);
+        new_str.str[i].pos.y = str_pos.y;
+
+        // TODO: Check if letter, number, invalid character, uppercase lowercase, etc.
+        new_str.str[i].tex_offset = (str[i] == ' ') ? 0 : (str[i] - 'A'); 
+    } 
+
+    return new_str;
+}
+
+void p2d_char_render(P2DChar *chr) {
+    glm::mat4 model = glm::mat4(1.0f);
+    model = glm::translate(model, glm::vec3(chr->pos.x, chr->pos.y, 1.0f));
+    model = glm::scale(model, glm::vec3(64.0f, 64.0f, 1.0f));
+
+    shader_program_load_mat4(p2d_g_font_shader_program.id, "model", model);
+    shader_program_load_float(p2d_g_font_shader_program.id, "unfTexOffset", chr->tex_offset);
+
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+}
+
+void p2d_string_render(P2DString *str) {
+    glBindTexture(GL_TEXTURE_2D, p2d_g_font_bitmap.id);
+    glUseProgram(p2d_g_font_shader_program.id);
+    glm::mat4 model = glm::mat4(1.0f);
+
+    glBindVertexArray(p2d_g_quad_model.vao);
+
+    for(int i = 0; i < str->len; i++) {
+        p2d_char_render(&str->str[i]);
+    }
+
+    glBindVertexArray(0);
+    glUseProgram(0);
+    glBindTexture(GL_TEXTURE_2D, 0);
+}
+
 // Thanks to https://www.youtube.com/watch?v=RgxR6akghe8&t=803s
 bool key_pressed_this_frame(KeyboardKey key) {
     bool was_pressed = (key.is_down && key.half_transition_count == 1) || (key.half_transition_count > 1);
@@ -249,6 +307,7 @@ bool key_is_down(KeyboardKey key) {
 }
 
 void P2D_init() {
+    p2d_font_bitmap_init();
     p2d_tex_quad_model_init();
     p2d_col_ellipse_model_init();
 }
