@@ -1,6 +1,6 @@
-#include "includes/engine.h"
-#include "includes/shader_program.h"
-#include "includes/gl_util.h"
+#include "../includes/engine.h"
+#include "../includes/shader_program.h"
+#include "../includes/gl_util.h"
 
 #include <glm/vec3.hpp>
 #include <glm/mat4x4.hpp>
@@ -20,8 +20,7 @@ static P2DEllipseModel p2d_g_ellipse_model;
 static P2DColorEllipseEntity p2d_g_ellipse_entities[P2D_MAX_ELLIPSE_ENTITIES] = {};
 static uint8_t p2d_g_active_ellipse_entities[P2D_MAX_ELLIPSE_ENTITIES] = {};
 
-// TODO: load textures
-void p2d_quad_model_init() {
+void p2d_tex_quad_model_init() {
     p2d_g_quad_model.vertices[0].pos.x = 0.0f;
     p2d_g_quad_model.vertices[0].pos.y = 1.0f;
 
@@ -40,7 +39,8 @@ void p2d_quad_model_init() {
     p2d_g_quad_model.vertices[5].pos.x = 1.0f;
     p2d_g_quad_model.vertices[5].pos.y = 0.0f;
 
-    load_gl_buffers_pv(p2d_g_quad_model.vertices, 6, &p2d_g_quad_model.vbo, &p2d_g_quad_model.vao);
+    // The texture vertices will be the same as the position vertices
+    load_gl_buffers_no_tex(p2d_g_quad_model.vertices, 6, &p2d_g_quad_model.vbo, &p2d_g_quad_model.vao);
 }
 
 int p2d_load_entity_shaders(ShaderProgram *shader_program, Shader shaders[2]) {
@@ -130,7 +130,7 @@ void p2d_quad_render(P2DTexQuadEntity *quad, float dt) {
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void p2d_ellipse_model_init() {
+void p2d_col_ellipse_model_init() {
     float pos_x_45 = cos(PI / 4.0f); 
     float pos_y_45 = sin(PI / 4.0f); 
 
@@ -170,7 +170,7 @@ void p2d_ellipse_model_init() {
     p2d_g_ellipse_model.vertices[9].pos.x = 0.0f;
     p2d_g_ellipse_model.vertices[9].pos.y = 1.0f;
 
-    load_gl_buffers_pv(p2d_g_ellipse_model.vertices, 10, &p2d_g_ellipse_model.vbo, &p2d_g_ellipse_model.vao);
+    load_gl_buffers_no_tex(p2d_g_ellipse_model.vertices, 10, &p2d_g_ellipse_model.vbo, &p2d_g_ellipse_model.vao);
 }
 
 P2DColorEllipseEntity *p2d_col_ellipse_entity_new(Vector2 position, Vector2 rotation, uint32_t width, uint32_t height, Shader shaders[2], float rgb_color[3]) {
@@ -249,6 +249,6 @@ bool key_is_down(KeyboardKey key) {
 }
 
 void P2D_init() {
-    p2d_quad_model_init();
-    p2d_ellipse_model_init();
+    p2d_tex_quad_model_init();
+    p2d_col_ellipse_model_init();
 }

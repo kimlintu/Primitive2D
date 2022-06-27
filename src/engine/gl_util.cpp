@@ -1,6 +1,6 @@
-#include "includes/gl_util.h"
+#include "../includes/gl_util.h"
 
-void load_gl_buffers_v(Vertex *vertices, uint64_t vertices_amt, GLuint *vbo, GLuint *vao) {
+void load_gl_buffers_tex(TexVertex *vertices, uint64_t vertices_amt, GLuint *vbo, GLuint *vao) {
     glGenVertexArrays(1, vao);
     glBindVertexArray(*vao);
 
@@ -19,7 +19,7 @@ void load_gl_buffers_v(Vertex *vertices, uint64_t vertices_amt, GLuint *vbo, GLu
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-void load_gl_buffers_pv(PosVertex *vertices, uint64_t vertices_amt, GLuint *vbo, GLuint *vao) {
+void load_gl_buffers_no_tex(Vertex *vertices, uint64_t vertices_amt, GLuint *vbo, GLuint *vao) {
     glGenVertexArrays(1, vao);
     glBindVertexArray(*vao);
 

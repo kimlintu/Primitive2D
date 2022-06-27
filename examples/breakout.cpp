@@ -9,6 +9,14 @@ static P2DTexQuadEntity *paddle;
 
 static P2DColorEllipseEntity *ball;
 
+/*
+struct FontBitmap {
+    Texture bitmap;
+};
+
+FontBitmap font_bitmap;
+*/
+
 void game_init() {
     P2D_init();
 
@@ -103,6 +111,13 @@ void game_update(KeyboardState *keyboard_state) {
 }
 
 void game_render(float dt) {
+    /*
+    Texture font_bitmap_texture = load_texture("../res/font_bitmap.png");
+    FontBitmap font_bitmap = { font_bitmap_texture };
+    Vector2 text_pos = { 10.0f, 13.0f };
+    render_text("abcdefgh", text_pos); 
+    */
+
     p2d_quad_render(paddle, dt);
     p2d_ellipse_render(ball, dt);
 }

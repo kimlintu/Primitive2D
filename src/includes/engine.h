@@ -1,17 +1,17 @@
 #ifndef ENGINE_H
 #define ENGINE_H
 
-#include "includes/glad_i.h"
-#include "includes/sdl_gl.h"
+#include "glad_i.h"
+#include "sdl_gl.h"
 
-#include "includes/shader_program.h"
-#include "includes/texture.h"
-#include "includes/vertex.h"
+#include "shader_program.h"
+#include "texture.h"
+#include "vertex.h"
 
 void P2D_init();
 
 struct P2DQuadModel {
-    PosVertex vertices[6];
+    Vertex vertices[6];
     GLuint vao;
     GLuint vbo;
 };
@@ -32,11 +32,12 @@ P2DTexQuadEntity *p2d_tex_quad_entity_new(Vector2 position, Vector2 rotation, ui
 void p2d_quad_render(P2DTexQuadEntity *quad, float dt);
 
 struct P2DEllipseModel {
-    PosVertex vertices[10];
+    Vertex vertices[10];
     GLuint vao;
     GLuint vbo;
 };
 
+// TODO: Should use another model since it doesn't use textures
 struct P2DColorEllipseEntity {
     P2DEllipseModel *model;
     Vector2 position; // TODO: replace with glm::vec2?

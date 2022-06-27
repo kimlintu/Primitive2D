@@ -10,8 +10,8 @@ set COMPILER_OPTIONS=/external:W4 /external:I%SDL_HEADERS_PATH% /W4 /Zi
 
 set LINKER_OPTIONS=/LIBPATH:%SDL_LIBRARY_PATH% /subsystem:windows 
 
-set FILE_PATH="..\src"
-set FILES=%FILE_PATH%\platform.cpp %FILE_PATH%\glad.c %FILE_PATH%\shader_program.cpp %FILE_PATH%\engine.cpp %FILE_PATH%\texture.cpp %FILE_PATH%\gl_util.cpp
+set FILE_PATH="..\src\engine"
+set FILES=%FILE_PATH%\..\platform.cpp %FILE_PATH%\glad.c %FILE_PATH%\shader_program.cpp %FILE_PATH%\engine.cpp %FILE_PATH%\texture.cpp %FILE_PATH%\gl_util.cpp
 
 
 IF NOT EXIST ..\build mkdir ..\build
