@@ -16,8 +16,19 @@ Texture load_texture(const char *src) {
 
     int32_t width, height, nr_channels;
     uint8_t *data = stbi_load(src, &width, &height, &nr_channels, 0);
+
+    GLenum in_format;
+    GLint file_format;
+    if(nr_channels == 4) {
+        in_format = GL_RGBA;
+        file_format = GL_RGBA;
+    } else {
+        in_format = GL_RGB;
+        file_format = GL_RGB;
+    }
+
     if(data) {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+        glTexImage2D(GL_TEXTURE_2D, 0, in_format, width, height, 0, file_format, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(GL_TEXTURE_2D);
     } else {
         fprintf(stderr, "Could not load texture. Src: %s\n", src);
