@@ -5,9 +5,12 @@
 #include <glm/mat4x4.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include <math.h>
+
 static P2DTexQuadEntity *paddle;
 
-static P2DColorEllipseEntity *ball;
+//static P2DColorEllipseEntity *ball;
+static P2DTexQuadEntity *ball;
 
 static P2DString str; 
 
@@ -36,22 +39,31 @@ void game_init() {
 
     // Ball 
     // TODO: Maybe the ball should be a quad as well, since we're going to use sprites anyway 
-    test_default_shaders[0].src_path = "../src/shaders/def_color_ellipse.vert";
-    test_default_shaders[1].src_path = "../src/shaders/def_color_ellipse.frag";
-    float ball_height = 32;
-    Vector2 ball_position = { (800.0f / 2.0f), (600.0f / 2.0f) - (ball_height / 2.0f) };
-    float ball_color[3] = { 0.4f, 0.64f, 0.9f };
-    ball = p2d_col_ellipse_entity_new(ball_position, ball_position, 16, 16, test_default_shaders, ball_color);
+    //test_default_shaders[0].src_path = "../src/shaders/def_color_ellipse.vert";
+    //test_default_shaders[1].src_path = "../src/shaders/def_color_ellipse.frag";
+    test_default_shaders[0].src_path = NULL;
+    test_default_shaders[1].src_path = NULL;
+    Vector2 ball_position = { (800.0f / 2.0f), (600.0f / 2.0f) - (32.0f / 2.0f) };
+    //float ball_color[3] = { 0.4f, 0.64f, 0.9f };
+    ball = p2d_tex_quad_entity_new(ball_position, ball_position, 32, 32, test_default_shaders, "../res/ball.png");
     if(!ball) {
         // TODO: error handling
         exit(-1);
     } else {
-        ball->velocity.x = 2.0f;
-        ball->velocity.y = 2.0f;
+        ball->velocity.x = 6.0f;
+        ball->velocity.y = 6.0f;
     }
 
     Vector2 str_pos = { 2.0f, 10.0f };
     str = p2d_put_string("ABC DEF", str_pos); 
+}
+
+bool p2d_aabb_collision(Vector2 pos_a, float width_a, float height_a, Vector2 pos_b, float width_b, float height_b) {
+    if((pos_a.x <= (pos_b.x + width_b)) && ((pos_a.x + width_a) >= pos_b.x) &&
+            (pos_a.y <= (pos_b.y + height_b)) && ((pos_a.y + height_a) >= pos_b.y)) {
+        return true;
+    }
+    return false;
 }
 
 void game_update(KeyboardState *keyboard_state) {
@@ -84,38 +96,49 @@ void game_update(KeyboardState *keyboard_state) {
         paddle->velocity.x += speed;
     }
 
-    if(key_is_down(keyboard_state->keys[KEY_S])) {
-        paddle->velocity.y += speed;
-    }
-
-    if(key_is_down(keyboard_state->keys[KEY_W])) {
-        paddle->velocity.y -= speed;
-    }
-
-    // Ball movement
     ball->position.x += ball->velocity.x;
     ball->position.y += ball->velocity.y;
+    if(p2d_aabb_collision(ball->position, ball->width, ball->height, paddle->position, paddle->width, paddle->height)) {
+        // If the ball was above the paddle before it collided
+        if((ball->position.y + ball->height) >= (paddle->position.y + (paddle->height >> 2))) {
+            float paddle_velocity_x = fabs(paddle->velocity.x);
+            if(ball->position.x > (paddle->position.x + (paddle->width >> 1))) {
+                ball->position.x = paddle->position.x + paddle->width;
+                if(paddle_velocity_x) {
+                    ball->velocity.x = paddle_velocity_x;
+                } else {
+                    ball->velocity.x = 15.0f;
+                }
+            } else {
+                ball->position.x = paddle->position.x - ball->width;
+                if(paddle_velocity_x) {
+                    ball->velocity.x = -paddle_velocity_x;
+                } else {
+                    ball->velocity.x = -15.0f;
+                }
+            }
+        } else {
+            ball->position.y = paddle->position.y - ball->height;
+        }
 
-    if(((ball->position.y + ball->height) >= 600.0f) || 
-            ((ball->position.y - ball->height) < 0.0f)) {
-        ball->velocity.y = -ball->velocity.y;
-    }
+        if(ball->velocity.y > 0) {
+            ball->velocity.y = -ball->velocity.y;
+        }
+    } else {
+        if(((ball->position.y + ball->height) >= 600.0f) || 
+                ((ball->position.y) < 0.0f)) {
+            ball->velocity.y = -ball->velocity.y;
+        }
 
-    if(((ball->position.x + ball->width) >= 800.0f) ||
-            ((ball->position.x - ball->width) <= 0.0f)) {
-        ball->velocity.x = -ball->velocity.x;
+        if(((ball->position.x + ball->width) >= 800.0f) ||
+                ((ball->position.x) <= 0.0f)) {
+            ball->velocity.x = -ball->velocity.x;
+        }
     }
 }
 
 void game_render(float dt) {
-    /*
-    Texture font_bitmap_texture = load_texture("../res/font_bitmap.png");
-    FontBitmap font_bitmap = { font_bitmap_texture };
-    Vector2 text_pos = { 10.0f, 13.0f };
-    render_text("abcdefgh", text_pos); 
-    */
-
     p2d_quad_render(paddle, dt);
-    p2d_ellipse_render(ball, dt);
+    p2d_quad_render(ball, dt);
     p2d_string_render(&str);
 }
