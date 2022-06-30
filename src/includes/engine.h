@@ -65,6 +65,8 @@ struct P2DString {
 P2DString p2d_put_string(const char *str, Vector2 str_pos);
 void p2d_string_render(P2DString *str);
 
+bool p2d_aabb_collision(Vector2 pos_a, float width_a, float height_a, Vector2 pos_b, float width_b, float height_b);
+
 enum KeyboardKeyID {
     KEY_W,
     KEY_A,

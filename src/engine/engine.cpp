@@ -62,7 +62,8 @@ int p2d_load_entity_shaders(ShaderProgram *shader_program, Shader shaders[2]) {
 
         return 0;
     }
-    glm::mat4 projection = glm::ortho(0.0f, 800.0f, 600.0f, 0.0f, -1.0f, 1.0f);
+    // TODO: The window dimensions should not be constants
+    glm::mat4 projection = glm::ortho(0.0f, 640.0f, 480.0f, 0.0f, -1.0f, 1.0f);
     glUseProgram(shader_program->id);
     shader_program_load_mat4(shader_program->id, "projection", projection);
     glUseProgram(0);
@@ -287,6 +288,14 @@ void p2d_string_render(P2DString *str) {
     glBindVertexArray(0);
     glUseProgram(0);
     glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+bool p2d_aabb_collision(Vector2 pos_a, float width_a, float height_a, Vector2 pos_b, float width_b, float height_b) {
+    if((pos_a.x <= (pos_b.x + width_b)) && ((pos_a.x + width_a) >= pos_b.x) &&
+            (pos_a.y <= (pos_b.y + height_b)) && ((pos_a.y + height_a) >= pos_b.y)) {
+        return true;
+    }
+    return false;
 }
 
 // Thanks to https://www.youtube.com/watch?v=RgxR6akghe8&t=803s

@@ -37,8 +37,8 @@ int main(int argc, char *argv[]) {
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
-    int DISPLAY_WIDTH = 800; 
-    int DISPLAY_HEIGHT = 600; 
+    int DISPLAY_WIDTH = WINDOW_WIDTH; 
+    int DISPLAY_HEIGHT = WINDOW_HEIGHT; 
     SDL_Window *window = SDL_CreateWindow("Title", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
             DISPLAY_WIDTH, DISPLAY_HEIGHT, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
     if(!window) {
@@ -60,7 +60,7 @@ int main(int argc, char *argv[]) {
         return -1;
     }
 
-    glViewport(0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT);
+    glViewport(0, 0, FRAME_BUFFER_WIDTH, FRAME_BUFFER_HEIGHT);
     glClearColor(0.3f, 0.5f, 0.0f, 1.0f);
 
     game_init();
@@ -69,6 +69,26 @@ int main(int argc, char *argv[]) {
 
     uint64_t prev_tick = SDL_GetTicks64();
     uint64_t lag = 0;
+
+    GLuint fbo;
+    glGenFramebuffers(1, &fbo);
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+    GLuint fbo_tex;
+    glGenTextures(1, &fbo_tex);
+    glBindTexture(GL_TEXTURE_2D, fbo_tex);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 640, 480, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fbo_tex, 0);
+
+    GLuint ds;
+    glGenTextures(1, &ds);
+    glBindTexture(GL_TEXTURE_2D, ds);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, 640, 480, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, NULL);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, ds, 0);
+    
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
     bool running = true;
     while(running) {
@@ -138,9 +158,12 @@ int main(int argc, char *argv[]) {
         }
         float dt = lag / MS_PER_TICK;
 
+        glBindFramebuffer(GL_FRAMEBUFFER, fbo);
         glClear(GL_COLOR_BUFFER_BIT);
 
         game_render(dt);
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+        glBlitFramebuffer(0, 0, 640, 480, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT, GL_NEAREST);
 
         SDL_GL_SwapWindow(window);
     }
